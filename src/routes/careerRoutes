@@ -5,21 +5,22 @@ const router = express.Router();
 
 router.post("/generate", async (req, res) => {
     try {
-        const { student_id, country, assessment_result } = req.body;
+        const { student_id, country, grade, assessment_result } = req.body;
 
-        if (!student_id || !country || !assessment_result) {
+        if (!student_id || !country || grade || !assessment_result) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
         console.log("Assessment Result:", assessment_result);
 
         // Get AI-generated career options
-        const careerOptions = await getCareerSuggestions(assessment_result);
+        const careerOptions = await getCareerSuggestions(assessment_result,country,grade);
 
         // Save to MongoDB
         const newCareerSuggestion = new CareerSuggestion({
             student_id,
             country,
+            grade,
             assessment_result,
             career_options: careerOptions
         });
